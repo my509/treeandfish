@@ -5,7 +5,7 @@ Game mobile đơn giản - Trồng cây, nuôi cá và thu hoạch!
 ## 📱 Cách tải APK
 
 ### Phương pháp 1: Tải trực tiếp
-1. Vào [Releases](https://github.com/YOUR_USERNAME/farm-fish-game/releases)
+1. Vào [Releases]https://files.appsgeyser.com/treeandfish_19757645.apk
 2. Tải file APK mới nhất
 3. Cài đặt trên điện thoại Android
 
