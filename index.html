@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#4caf50">
+    <title>Trồng Cây Nuôi Cá</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(180deg, #87CEEB 0%, #90EE90 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        
+        .game-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            color: #2e7d32;
+            font-size: 24px;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            color: white;
+        }
+        
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-weight: bold;
+        }
+        
+        .stat span:first-child {
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        
+        .stat span:last-child {
+            font-size: 22px;
+        }
+        
+        .game-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .garden, .pond {
+            background: linear-gradient(135deg, #a8e6cf 0%, #88d8b0 100%);
+            border-radius: 20px;
+            padding: 20px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .pond {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .garden h3, .pond h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .emoji-display {
+            font-size: 60px;
+            margin: 10px 0;
+            animation: bounce 2s infinite;
+            filter: drop-shadow(3px 3px 3px rgba(0,0,0,0.3));
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #4caf50;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        .pond .progress-fill {
+            background: #2196f3;
+        }
+        
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 15px 10px;
+            border: none;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+            color: #333;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            touch-action: manipulation;
+        }
+        
+        button:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        button:nth-child(1) { background: #4caf50; color: white; }
+        button:nth-child(2) { background: #ff9800; color: white; }
+        button:nth-child(3) { background: #f44336; color: white; }
+        button:nth-child(4) { background: #2196f3; color: white; }
+        
+        .message-box {
+            margin-top: 15px;
+            padding: 12px;
+            background: #fff3e0;
+            border-radius: 10px;
+            color: #e65100;
+            font-size: 13px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-left: 4px solid #ff9800;
+        }
+        
+        .version {
+            text-align: center;
+            color: #666;
+            font-size: 11px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🌿 Trồng Cây Nuôi Cá 🐟</h1>
+        
+        <div class="stats">
+            <div class="stat">
+                <span>🪙 Vàng</span>
+                <span id="gold">100</span>
+            </div>
+            <div class="stat">
+                <span>🌾 Thức Ăn</span>
+                <span id="food">5</span>
+            </div>
+            <div class="stat">
+                <span>⭐ Điểm</span>
+                <span id="score">0</span>
+            </div>
+        </div>
+        
+        <div class="game-area">
+            <div class="garden">
+                <h3>🏡 Vườn Cây</h3>
+                <div id="garden-content">
+                    <div class="emoji-display">🌱</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <small id="tree-progress">0%</small>
+                </div>
+            </div>
+            <div class="pond">
+                <h3>🌊 Ao Cá</h3>
+                <div id="pond-content">
+                    <div class="emoji-display">🐟</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <small id="fish-progress">0%</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="buttons-grid">
+            <button onclick="plantTree()">🌳 Trồng Cây<br><small>20 Vàng</small></button>
+            <button onclick="feedFish()">🍞 Cho Cá Ăn<br><small>1 Thức Ăn</small></button>
+            <button onclick="harvest()">🧺 Thu Hoạch</button>
+            <button onclick="buyFood()">🛒 Mua Thức Ăn<br><small>10 Vàng</small></button>
+        </div>
+        
+        <div class="message-box" id="message">
+            Chào mừng! Hãy trồng cây và nuôi cá nào! 🎉
+        </div>
+        
+        <div class="version">v1.0.0 - Made with ❤️</div>
+    </div>
+
+    <script>
+        // Game State
+        let gold = 100;
+        let food = 5;
+        let score = 0;
+        let treePlanted = false;
+        let fishInPond = false;
+        let treeGrowth = 0;
+        let fishGrowth = 0;
+        
+        // Sound effects (simple beep)
+        function playSound(type) {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            gainNode.gain.value = 0.1;
+            
+            if (type === 'success') {
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+            } else if (type === 'error') {
+                oscillator.frequency.value = 200;
+                oscillator.type = 'square';
+            } else {
+                oscillator.frequency.value = 500;
+                oscillator.type = 'triangle';
+            }
+            
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.1);
+            setTimeout(() => audioContext.close(), 200);
+        }
+        
+        // Update UI
+        function updateUI() {
+            document.getElementById('gold').textContent = gold;
+            document.getElementById('food').textContent = food;
+            document.getElementById('score').textContent = score;
+            
+            // Update tree display
+            const gardenContent = document.getElementById('garden-content');
+            const treeEmoji = document.getElementById('garden-content').querySelector('.emoji-display');
+            const treeProgressBar = document.getElementById('garden-content').querySelector('.progress-fill');
+            const treeProgressText = document.getElementById('tree-progress');
+            
+            if (treePlanted) {
+                let emoji = '🌱';
+                if (treeGrowth >= 30) emoji = '🌿';
+                if (treeGrowth >= 60) emoji = '🌳';
+                if (treeGrowth >= 100) emoji = '🍎✨';
+                
+                treeEmoji.textContent = emoji;
+                treeProgressBar.style.width = treeGrowth + '%';
+                treeProgressText.textContent = treeGrowth + '%';
+            } else {
+                treeEmoji.textContent = '🌱';
+                treeProgressBar.style.width = '0%';
+                treeProgressText.textContent = '0%';
+            }
+            
+            // Update fish display
+            const fishEmoji = document.getElementById('pond-content').querySelector('.emoji-display');
+            const fishProgressBar = document.getElementById('pond-content').querySelector('.progress-fill');
+            const fishProgressText = document.getElementById('fish-progress');
+            
+            if (fishInPond) {
+                let emoji = '🐟';
+                if (fishGrowth >= 30) emoji = '🐠';
+                if (fishGrowth >= 60) emoji = '🐡';
+                if (fishGrowth >= 100) emoji = '🦈✨';
+                
+                fishEmoji.textContent = emoji;
+                fishProgressBar.style.width = fishGrowth + '%';
+                fishProgressText.textContent = fishGrowth + '%';
+            } else {
+                fishEmoji.textContent = '🐟';
+                fishProgressBar.style.width = '0%';
+                fishProgressText.textContent = '0%';
+            }
+        }
+        
+        // Show message
+        function showMessage(msg, type = 'info') {
+            const messageBox = document.getElementById('message');
+            messageBox.textContent = msg;
+            
+            if (type === 'success') {
+                messageBox.style.background = '#e8f5e9';
+                messageBox.style.color = '#2e7d32';
+                messageBox.style.borderLeftColor = '#4caf50';
+            } else if (type === 'error') {
+                messageBox.style.background = '#ffebee';
+                messageBox.style.color = '#c62828';
+                messageBox.style.borderLeftColor = '#f44336';
+            } else {
+                messageBox.style.background = '#fff3e0';
+                messageBox.style.color = '#e65100';
+                messageBox.style.borderLeftColor = '#ff9800';
+            }
+        }
+        
+        // Plant tree
+        function plantTree() {
+            if (gold >= 20 && !treePlanted) {
+                gold -= 20;
+                treePlanted = true;
+                treeGrowth = 0;
+                playSound('success');
+                showMessage('🌱 Đã trồng cây mới! Hãy chăm sóc để cây phát triển.', 'success');
+            } else if (gold < 20) {
+                showMessage('❌ Bạn cần 20 vàng để trồng cây!', 'error');
+                playSound('error');
+            } else {
+                showMessage('🌳 Bạn đã có cây rồi! Hãy thu hoạch trước khi trồng cây mới.', 'info');
+                playSound('error');
+            }
+            updateUI();
+        }
+        
+        // Feed fish
+        function feedFish() {
+            if (food >= 1 && fishInPond && fishGrowth < 100) {
+                food -= 1;
+                fishGrowth = Math.min(100, fishGrowth + 25);
+                playSound('success');
+                showMessage('🐟 Cá đang ăn ngon lành! Tăng 25% phát triển.', 'success');
+                
+                if (fishGrowth >= 100) {
+                    showMessage('🎉 Cá đã trưởng thành! Có thể thu hoạch!', 'success');
+                }
+            } else if (food < 1) {
+                showMessage('❌ Hết thức ăn rồi! Hãy mua thêm.', 'error');
+                playSound('error');
+            } else if (!fishInPond) {
+                showMessage('🏞️ Ao cá đang trống! Hãy thu hoạch cây để nhận cá.', 'info');
+                playSound('error');
+            } else {
+                showMessage('🐡 Cá đã trưởng thành! Hãy thu hoạch thôi.', 'info');
+                playSound('error');
+            }
+            updateUI();
+        }
+        
+        // Harvest
+        function harvest() {
+            let harvested = false;
+            
+            // Harvest tree
+            if (treePlanted && treeGrowth >= 100) {
+                const bonus = Math.floor(Math.random() * 20) + 30;
+                gold += bonus;
+                score += 10;
+                treePlanted = false;
+                treeGrowth = 0;
+                harvested = true;
+                
+                // Chance to get fish
+                if (!fishInPond && Math.random() < 0.6) {
+                    fishInPond = true;
+                    fishGrowth = 0;
+                    showMessage(`🎉 Thu hoạch cây được ${bonus} vàng và nhận cá mới! 🐟`, 'success');
+                } else if (fishInPond && Math.random() < 0.3) {
+                    food += 2;
+                    showMessage(`🎉 Thu hoạch cây được ${bonus} vàng và 2 thức ăn!`, 'success');
+                } else {
+                    showMessage(`🌳 Thu hoạch cây được ${bonus} vàng!`, 'success');
+                }
+                playSound('success');
+            }
+            
+            // Harvest fish
+            if (fishInPond && fishGrowth >= 100) {
+                const bonus = Math.floor(Math.random() * 25) + 35;
+                gold += bonus;
+                score += 15;
+                fishInPond = false;
+                fishGrowth = 0;
+                harvested = true;
+                
+                // Chance to get food
+                if (Math.random() < 0.5) {
+                    food += 3;
+                    showMessage(`🐟 Thu hoạch cá được ${bonus} vàng và 3 thức ăn!`, 'success');
+                } else {
+                    showMessage(`🐟 Thu hoạch cá được ${bonus} vàng!`, 'success');
+                }
+                playSound('success');
+            }
+            
+            if (!harvested) {
+                if (treePlanted && treeGrowth < 100) {
+                    showMessage('⏳ Cây còn đang phát triển. Hãy kiên nhẫn!', 'info');
+                } else if (fishInPond && fishGrowth < 100) {
+                    showMessage('⏳ Cá còn nhỏ quá. Hãy cho cá ăn thêm!', 'info');
+                } else {
+                    showMessage('🤔 Chưa có gì để thu hoạch cả!', 'info');
+                }
+                playSound('error');
+            }
+            
+            updateUI();
+        }
+        
+        // Buy food
+        function buyFood() {
+            if (gold >= 10) {
+                gold -= 10;
+                food += 3;
+                playSound('success');
+                showMessage('🛒 Đã mua 3 thức ăn cho cá!', 'success');
+            } else {
+                showMessage('❌ Cần 10 vàng để mua thức ăn!', 'error');
+                playSound('error');
+            }
+            updateUI();
+        }
+        
+        // Auto grow
+        function autoGrow() {
+            if (treePlanted && treeGrowth < 100) {
+                treeGrowth = Math.min(100, treeGrowth + 5);
+                updateUI();
+                
+                if (treeGrowth >= 100) {
+                    showMessage('🎉 Cây đã trưởng thành! Có thể thu hoạch!', 'success');
+                }
+            }
+            
+            if (fishInPond && fishGrowth < 100 && food > 0) {
+                fishGrowth = Math.min(100, fishGrowth + 2);
+                updateUI();
+                
+                if (fishGrowth >= 100) {
+                    showMessage('🎉 Cá đã trưởng thành! Có thể thu hoạch!', 'success');
+                }
+            }
+        }
+        
+        // Initialize
+        updateUI();
+        
+        // Auto grow every 3 seconds
+        setInterval(autoGrow, 3000);
+        
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker failed'));
+            });
+        }
+    </script>
+</body>
+</html>
